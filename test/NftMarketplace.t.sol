@@ -23,11 +23,13 @@ contract NftMarketplaceTest is Test {
         myToken = new MyToken(10000);
         nft = new KasonNFT(alice);
         nft_market = new NftMarketplace(address(nft),address(myToken));
+        myToken.transfer(buyer, 100);
+        
         vm.stopPrank();
         
     }
 
-    function test_listItem() public {
+    function testListItem() public {
         vm.startPrank(seller);
         nft.safeMint(seller, "abc");
         nft.approve(address(nft_market), 0);
@@ -35,7 +37,16 @@ contract NftMarketplaceTest is Test {
         uint price = nft_market.tokenPrice(0);
         assertEq(price, 13);
         vm.stopPrank();
-        
+    }
+
+    function testBuyNFT()public{
+        testListItem();
+        vm.startPrank(buyer);
+        myToken.approve(address(nft_market), 13);
+        nft_market.buyNFT(0, 13);
+        address owner = nft.ownerOf(0);
+        assertEq(owner,buyer);
+        vm.stopPrank();
     }
 
     // function testFuzz_SetNumber(uint256 x) public {
