@@ -7,26 +7,21 @@ import {MyToken} from "../src/MyToken.sol";
 import {KasonNFT} from "../src/KasonNFT.sol";
 import {Vm} from "forge-std/Vm.sol";
 
-
 contract NftMarketplaceTest is Test {
     NftMarketplace public nft_market;
     MyToken public myToken;
     KasonNFT public nft;
-    address public alice  = address(1);
+    address public alice = address(1);
     address public buyer = address(2);
     address public seller = address(3);
-
-
 
     function setUp() public {
         vm.startPrank(alice);
         myToken = new MyToken(10000);
         nft = new KasonNFT(alice);
-        nft_market = new NftMarketplace(address(nft),address(myToken));
+        nft_market = new NftMarketplace(address(nft), address(myToken));
         myToken.transfer(buyer, 100);
-        
         vm.stopPrank();
-        
     }
 
     function testListItem() public {
@@ -39,13 +34,13 @@ contract NftMarketplaceTest is Test {
         vm.stopPrank();
     }
 
-    function testBuyNFT()public{
+    function testBuyNFT() public {
         testListItem();
         vm.startPrank(buyer);
         myToken.approve(address(nft_market), 13);
         nft_market.buyNFT(0, 13);
         address owner = nft.ownerOf(0);
-        assertEq(owner,buyer);
+        assertEq(owner, buyer);
         vm.stopPrank();
     }
 
